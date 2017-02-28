@@ -1,4 +1,3 @@
 ## What?
 
-Downloaded plugin zip files will temporarily appear here, then they will be
-deleted after they are unpacked.
+Downloaded theme zip files will temporarily appear here. They are deleted after they are unpacked.

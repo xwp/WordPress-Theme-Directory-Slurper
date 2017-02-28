@@ -1,3 +1,3 @@
 ## What?
 
-Downloaded plugin readmes will appear here.
+Downloaded theme readmes will appear here.

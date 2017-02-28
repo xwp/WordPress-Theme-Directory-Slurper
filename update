@@ -14,25 +14,25 @@ switch ( $type ) {
 	case 'readme':
 		$directory = 'readmes';
 		$download = 'readmes/%s.readme';
-		$url = 'https://plugins.svn.wordpress.org/%s/trunk/readme.txt';
+		$url = 'https://themes.svn.wordpress.org/%s/trunk/readme.txt';
 		break;
 	case 'all':
-		$directory = 'plugins';
+		$directory = 'themes';
 		$download = 'zips/%s.zip';
-		$url = 'https://downloads.wordpress.org/plugin/%s.latest-stable.zip?nostats=1';
+		$url = 'https://downloads.wordpress.org/theme/%s.latest-stable.zip?nostats=1';
 		break;
 	default:
 		echo $cmd . ": invalid command\r\n";
 		echo 'Usage: php ' . $cmd . " [command]\r\n\r\n";
 		echo "Available commands:\r\n";
-		echo "  all - Downloads full plugin zips\r\n";
-		echo "  readme - Downloads plugin readmes only\r\n";
+		echo "  all - Downloads full theme zips\r\n";
+		echo "  readme - Downloads theme readmes only\r\n";
 		die();
 }
 
 echo "Determining most recent SVN revision...\r\n";
 try {
-	$changelog = @file_get_contents( 'https://plugins.trac.wordpress.org/log/?format=changelog&stop_rev=HEAD' );
+	$changelog = @file_get_contents( 'https://themes.trac.wordpress.org/log/?format=changelog&stop_rev=HEAD' );
 	if ( !$changelog )
 		throw new Exception( 'Could not fetch the SVN changelog' );
 	preg_match( '#\[([0-9]+)\]#', $changelog, $matches );
@@ -52,34 +52,34 @@ if ( file_exists( $directory . '/.last-revision' ) ) {
 }
 
 $start_time = time();
-$plugins = array();
+$themes = array();
 
 if ( $last_revision != $svn_last_revision ) {
 	if ( $last_revision ) {
-		$changelog_url = sprintf( 'https://plugins.trac.wordpress.org/log/?verbose=on&mode=follow_copy&format=changelog&rev=%d&limit=%d', $svn_last_revision, $svn_last_revision - $last_revision );
+		$changelog_url = sprintf( 'https://themes.trac.wordpress.org/log/?verbose=on&mode=follow_copy&format=changelog&rev=%d&limit=%d', $svn_last_revision, $svn_last_revision - $last_revision );
 		$changes = file_get_contents( $changelog_url );
 		preg_match_all( '#^' . "\t" . '*\* ([^/A-Z ]+)[ /].* \((added|modified|deleted|moved|copied)\)' . "\n" . '#m', $changes, $matches );
-		$plugins = array_unique( $matches[1] );
+		$themes = array_unique( $matches[1] );
 	} else {
-		$plugins = file_get_contents( 'https://plugins.svn.wordpress.org/' );
-		preg_match_all( '#<li><a href="([^/]+)/">([^/]+)/</a></li>#', $plugins, $matches );
-		$plugins = $matches[1];
+		$themes = file_get_contents( 'https://themes.svn.wordpress.org/' );
+		preg_match_all( '#<li><a href="([^/]+)/">([^/]+)/</a></li>#', $themes, $matches );
+		$themes = $matches[1];
 	}
 
-	foreach ( $plugins as $plugin ) {
-		$plugin = urldecode( $plugin );
-		echo "Updating " . $plugin;
+	foreach ( $themes as $theme ) {
+		$theme = urldecode( $theme );
+		echo "Updating " . $theme;
 
 		$output = null; $return = null;
-		exec( 'wget -q -np -O ' . escapeshellarg( sprintf($download, $plugin) ) . ' ' . escapeshellarg( sprintf($url, $plugin) ) . ' > /dev/null', $output, $return );
+		exec( 'wget -q -np -O ' . escapeshellarg( sprintf($download, $theme) ) . ' ' . escapeshellarg( sprintf($url, $theme) ) . ' > /dev/null', $output, $return );
 
-		if ( $return === 0 && file_exists( sprintf($download, $plugin) ) ) {
+		if ( $return === 0 && file_exists( sprintf($download, $theme) ) ) {
 			if ($type === 'all') {
-				if ( file_exists( 'plugins/' . $plugin ) )
-					exec( 'rm -rf ' . escapeshellarg( 'plugins/' . $plugin ) );
+				if ( file_exists( 'themes/' . $theme ) )
+					exec( 'rm -rf ' . escapeshellarg( 'themes/' . $theme ) );
 
-				exec( 'unzip -o -d plugins ' . escapeshellarg( 'zips/' . $plugin . '.zip' ) );
-				exec( 'rm -rf ' . escapeshellarg( 'zips/' . $plugin . '.zip' ) );
+				exec( 'unzip -o -d themes ' . escapeshellarg( 'zips/' . $theme . '.zip' ) );
+				exec( 'rm -rf ' . escapeshellarg( 'zips/' . $theme . '.zip' ) );
 			}
 		} else {
 			echo '... download failed.';
@@ -97,6 +97,6 @@ $end_time = time();
 $minutes = ( $end_time - $start_time ) / 60;
 $seconds = ( $end_time - $start_time ) % 60;
 
-echo "[SUCCESS] Done updating plugins!\r\n";
-echo "It took " . number_format($minutes) . " minute" . ( $minutes == 1 ? '' : 's' ) . " and " . $seconds . " second" . ( $seconds == 1 ? '' : 's' ) . " to update ". count($plugins)  ." plugin" . ( count($plugins) == 1 ? '' : 's') . "\r\n";
+echo "[SUCCESS] Done updating themes!\r\n";
+echo "It took " . number_format($minutes) . " minute" . ( $minutes == 1 ? '' : 's' ) . " and " . $seconds . " second" . ( $seconds == 1 ? '' : 's' ) . " to update ". count($themes)  ." theme" . ( count($themes) == 1 ? '' : 's') . "\r\n";
 echo "[DONE]\r\n";
