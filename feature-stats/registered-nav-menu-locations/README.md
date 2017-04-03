@@ -1,5 +1,5 @@
-Registered Sidebar Stats
-========================
+Registered Nav Menu Location Stats
+==================================
 
 For each slurped theme, the sidebars registered can be parsed out and written into a JSON file in the `data` subdirectory.
 
@@ -7,15 +7,31 @@ For each slurped theme, the sidebars registered can be parsed out and written in
 ```bash
 ../../update
 php ./parse-themes.php
-cat data/twentyfourteen.json
+cat data/twentythirteen.json
 ```
 
 Which will output:
 
 ```json
 {
-    "primary": "__(Top primary menu,twentyfourteen)",
-    "secondary": "__(Secondary menu in left sidebar,twentyfourteen)"
+    "sidebar-1": {
+        "name": "__(Main Widget Area,twentythirteen)",
+        "id": "sidebar-1",
+        "description": "__(Appears in the footer section of the site.,twentythirteen)",
+        "before_widget": "<aside id=\"%1$s\" class=\"widget %2$s\">",
+        "after_widget": "<\/aside>",
+        "before_title": "<h3 class=\"widget-title\">",
+        "after_title": "<\/h3>"
+    },
+    "sidebar-2": {
+        "name": "__(Secondary Widget Area,twentythirteen)",
+        "id": "sidebar-2",
+        "description": "__(Appears on posts and pages in the sidebar.,twentythirteen)",
+        "before_widget": "<aside id=\"%1$s\" class=\"widget %2$s\">",
+        "after_widget": "<\/aside>",
+        "before_title": "<h3 class=\"widget-title\">",
+        "after_title": "<\/h3>"
+    }
 }
 ```
 
@@ -25,7 +41,7 @@ Statistics for the registered sidebars can then be generated via:
 ./php generate-stats.php
 ```
 
-Stats have been copied into a [Google Sheet](https://docs.google.com/spreadsheets/d/1QCormQoVGlI8rKxgn0ylxEw4JAa71372wdoJwgLvENs/edit).
+Stats have been copied into a [Google Sheet](https://docs.google.com/spreadsheets/d/1sjm95-P7ocEL1m1TlAToL83TLNEijo9RKyBmERMA5hs/edit).
 
 
 ### Credits/License ###
